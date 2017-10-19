@@ -1,0 +1,36 @@
+.tempdisplay {
+   margin-left: 3em;
+}
+
+.tempdisplay .temp {
+  display: inline-block;
+  margin-right: 3em;
+}
+
+
+.tempdisplay label {
+   display: block;
+   margin: 2em 0 0 0;
+}
+
+.tempdisplay .sub {
+   font-size: .7em;
+}
+
+.tempdisplay div {
+   font-size: 1.2em;
+   font-weight: bold;
+   padding: .2em; 
+}
+
+#h2oin {
+   color: #0000FF;
+}
+
+#h2oout{
+   color: #FF00FF;
+}
+
+#wort {
+   color: #902320;
+}

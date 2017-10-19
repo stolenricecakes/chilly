@@ -2,18 +2,37 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <title>Salutations, World!</title>
+    <link rel="stylesheet" href="node_modules/c3/c3.min.css"/>
+    <link rel="stylesheet" href="temps.css"/>
+    <script src="node_modules/c3/c3.min.js"></script>
   </head>
   <body>
-    <h1>Hello World!</h1>
+    <h1>Season's Greetings!</h1>
     <!-- All of the Node.js APIs are available in this renderer process. -->
     We are using Node.js <script>document.write(process.versions.node)</script>,
     Chromium <script>document.write(process.versions.chrome)</script>,
     and Electron <script>document.write(process.versions.electron)</script>.
+   <div class="tempdisplay">
+     <div class="temp">
+      <label for="h2oin">H<span class="sub">2</span>O IN:</label>
+      <div id="h2oin"></div>
+     </div>
+     <div class="temp">
+      <label for="h2oout">H<span class="sub">2</span>O OUT:</label>
+      <div id="h2oout"></div>
+     </div>
+     <div class="temp">
+      <label  for="wort">WORT:</label>
+      <div id="wort"></div>
+     </div>
+   </div>
+   <div id="chart"></div>
   </body>
 
   <script>
     // You can also require other files to run in this process
     require('./renderer.js')
+    require('./chilltemps.js')
   </script>
 </html>
