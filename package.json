@@ -4,6 +4,7 @@
   "description": "A dynamic graphing dude that reports the state of a chilling session",
   "main": "main.js",
   "scripts": {
+    "install" : "electron-rebuild",
     "start": "electron ."
   },
   "repository": "https://github.com/stolenricecakes/chilly",
