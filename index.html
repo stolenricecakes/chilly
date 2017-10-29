@@ -2,17 +2,14 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Salutations, World!</title>
-    <link rel="stylesheet" href="node_modules/c3/c3.min.css"/>
+    <title>Pee pee poo poo</title>
+    <link rel="stylesheet" href="node_modules/dygraphs/dist/dygraph.css"/>
     <link rel="stylesheet" href="temps.css"/>
-    <script src="node_modules/c3/c3.min.js"></script>
+    <script src="node_modules/dygraphs/dist/dygraph.js"></script>
+    <script src="mockdata.js"></script>
   </head>
   <body>
-    <h1>Season's Greetings!</h1>
-    <!-- All of the Node.js APIs are available in this renderer process. -->
-    We are using Node.js <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
+   <h2>Chillin!</h2>
    <div class="tempdisplay">
      <div class="temp">
       <label for="h2oin">H<span class="sub">2</span>O IN:</label>
@@ -27,11 +24,13 @@
       <div id="wort"></div>
      </div>
    </div>
-   <div id="chart"></div>
+   <div id="chart" style="width: 90%"></div>
+   <div id="statusMsg"></div>
   </body>
 
   <script>
     // You can also require other files to run in this process
+    //require('./mockdata.js')
     require('./renderer.js')
     require('./chilltemps.js')
   </script>

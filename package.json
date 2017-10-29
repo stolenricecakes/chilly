@@ -1,28 +1,24 @@
 {
-  "name": "electron-quick-start",
+  "name": "chilly",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "A dynamic graphing dude that reports the state of a chilling session",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://github.com/stolenricecakes/chilly",
   "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
+    "chilly",
+    "brewing",
+    "chill session"
   ],
-  "author": "GitHub",
+  "author": "Andrew Wall",
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "~1.6.2",
     "electron-rebuild": "^1.6.0"
   },
   "dependencies": {
-    "c3": "^0.4.18",
-    "chart.js": "^2.7.0",
     "dygraphs": "^2.0.0",
     "serialport": "^5.0.0"
   }

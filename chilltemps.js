@@ -2,143 +2,129 @@ window.charty = {};
 
 var firstDate = new Date();
 (function() {
+  var my = this;
+  my.chartData = "Time,H2O in,H2O out,Wort\n";
+  charty = my;
+
   var counter = 0;
-  var testData = [
-        {"millis":2352,"h2oin":69.80,"h2oout":71.60,"wort":210.20},
-	{"millis":3005,"h2oin":70.70,"h2oout":71.60,"wort":210.10},
-	{"millis":3658,"h2oin":70.70,"h2oout":71.60,"wort":210.0},
-	{"millis":4311,"h2oin":69.80,"h2oout":91.60,"wort":209.8},
-	{"millis":4964,"h2oin":70.70,"h2oout":105.50,"wort":209.7},
-	{"millis":5617,"h2oin":69.80,"h2oout":120.40,"wort":209.6},
-	{"millis":6269,"h2oin":70.70,"h2oout":140.90,"wort":209.6},
-	{"millis":6923,"h2oin":69.80,"h2oout":160.8,"wort":209.5},
-	{"millis":7576,"h2oin":69.80,"h2oout":170.9,"wort":209.4},
-	{"millis":8228,"h2oin":69.80,"h2oout":180.1,"wort":209.33},
-	{"millis":8882,"h2oin":70.70,"h2oout":190.2,"wort":209.3}
- ];
-
- charty.data = { 
-   x: ['x'],
-   h2oin: ['h2oin'],
-   h2oout: ['h2oout'],
-   wort: ['wort']
- }
-
- charty.chart = c3.generate ({
-      data: {
-        x: 'x',
-        columns: [
-          ['x'],
-          ['h2oin'],
-          ['h2oout'],
-          ['wort']
-        ],
-        colors: {
-          h2oin: '#0000FF',
-          h2oout: '#FF00FF',
-          wort: '#902320'
-        }
-      },
-      line : {
-        connectNull: true
-      },
-      point : {
-        show : false
-      },
-      axis: {
-        x: {
-           type: 'timeseries',
-           tick: {
-              format: '%H:%M:%S'
-           }
-        } 
-      } 
-  }); 
-
-  charty.newTemp = function(newTemp) {
-     var colAry = [];
-     for (prop in newTemp) {
-        var ary = [];
-        if (prop === 'millis') {
-           ary.push("x"); 
-           //var myDate = new Date(firstDate.getTime() + newTemp[prop]);
-           //ary.push(myDate);
-           //console.log(myDate.getTime() + " [" + newTemp[prop] + "]  -> " + myDate);
-           ary.push(new Date());
-        }
-        else {
-           ary.push(prop);
-           document.getElementById(prop).innerHTML = newTemp[prop];
-           if (newTemp[prop] < 0) {
-              ary.push(null);
-           } 
-           else {
-              ary.push(newTemp[prop]);
-           }
-        }
-
-        colAry.push(ary);
-     }
-
-     charty.chart.flow( {
-       columns: colAry,
-       length: 0
-     });   
-      // 150 datapoints is plenty for the chart... once we reach that, start culling??
-
-/*
-    var maxPoints = 150;
-    var filter = 1;
-    var rows = allData[0];
-    if (rows.length > maxRows) {
-      filter = Math.floor(rows.length / maxRows);
-      for (i = rows.length - 1; i >= 0; i--){
-         if (i % filter != 0) {
-           for (j = 0; j < allData.columns.length; j++) {
-              allData.columns[j].splice(i, 1);
-           }            
-         }
-       } 
-       charty.chart.load(allData);
+  
+  my.zeropad = function(num) {
+    if (num < 10) { 
+      return "0" + num;
     }
-*/
+    else {
+      return num;
+    }
   }
 
+  my.timeFromDate = function(d) {
+    return (my.zeropad(d.getHours()) + ":" + my.zeropad(d.getMinutes()) + ":" + my.zeropad(d.getSeconds()) + "." + d.getMilliseconds());
+
+  };
+
+  my.legendFormatter = function(data) {
+    if (data.x == null) {
+       // This happens when there's no selection and {legend: 'always'} is set.
+//       return '<br>' + data.series.map(function(series) { return series.dashHTML + ' ' + series.labelHTML }).join('<br>');
+       return  data.series.map(function(series) { return series.dashHTML + ' <span style="color: ' + series.color + ';font-weight:bold">' +  series.labelHTML + '</span>' }).join(' ');
+    }
+
+    //var html = this.getLabels()[0] + ': ' + data.xHTML;
+    var d = new Date(parseInt(data.xHTML));
+    var html =  "Time: " + my.timeFromDate(d);
+    data.series.forEach(function(series) {
+      if (!series.isVisible) return;
+        var labeledData = '<span style="color: ' + series.color + ';">' + series.labelHTML + '</span>: ' + series.yHTML;
+        if (series.isHighlighted) {
+          labeledData = '<b>' + labeledData + '</b>';
+        }
+        html += series.dashHTML + ' ' + labeledData;
+    });
+   return html;
+  };
+
+
+
+  my.drawGraph = function () { 
+    var el = document.getElementById("chart");
+    var dygraphData = jsonToDygraph(mockdata);
+
+    new Dygraph(el,
+	my.chartData,
+	{ 
+          axes:  {
+           x : {
+             axisLabelFormatter: function(num, granularity, opts, dygraph) {
+                // d = numeric epoc, granularity == 0, which is SECONDLY
+                var d = new Date(num);
+                return my.timeFromDate(d);
+             } 
+	   }
+          },
+          colors: [ "#0000FF", "#FF00FF", "#902320" ],
+          legendFormatter: my.legendFormatter,
+          legend: "always" 
+        });
+  }; 
+
+  my.jsonToDygraph = function(data) {
+    var d = new Date().getTime();
+    if (data.length) { 
+       // this is not an object - likely an array.
+       var ary = []; 
+       for ( i = 0; i < data.length; i++) {
+           //ary.push( (data[i].millis + d) + "," + data[i].h2oin + "," + data[i].h2oout  + "," + data[i].wort);
+           ary.push( (d + data[i].millis) + "," + data[i].h2oin + "," + data[i].h2oout  + "," + data[i].wort);
+       }
+       return ary.join("\n");
+    } 
+    else {
+      // for now, do millis from data... later, snag your own.
+      return ( d + "," + data.h2oin + "," + data.h2oout  + "," + data.wort + "\n");
+    }
+  };
+
+  my.newTemp = function(newTemp) {
+     my.chartData += my.jsonToDygraph(newTemp);
+     for (prop in newTemp) {
+        if (prop !== 'millis') {
+           document.getElementById(prop).innerHTML = newTemp[prop];
+        }
+     }
+     my.drawGraph(); 
+  };
+
   var idx = 0;
-
-  function moarData() {
-     if (idx < testData.length) {
-        var row = testData[idx];
-        charty.chart.flow( {
-           columns: [
-              ['x', row.millis],
-              ['h2oin', row.h2oin],
-              ['h2oout', row.h2oout],
-              ['wort', row.wort]
-           ],
-           length: 0
-        });   
-
+  my.moarData = function() {
+     if (idx < mockdata.length) {
+        my.newTemp(mockdata[idx]);
         idx++;
-    //    setTimeout(moarData, 2000);
+        setTimeout(my.moarData, 1000);
      }
   }
    
-  //setTimeout(moarData, 2000);
-
-  
-
 })();
 
 
 const SerialPort = require('serialport')
-var port = new SerialPort('/dev/ttyACM0', {
-   baudRate: 9600
-});
+try {
+  var port = new SerialPort('/dev/ttyACM0', {
+     baudRate: 9600
+  });
+}
+catch(ex) {
+   document.getElementById("statusMsg").innerHTML = "<span class='error'>Error connecting to serial</span>";
+   charty.moarData();
+}
 
 var message = '';
 reggy = /({[a-z":0-9\-,\.]+})/;
+port.on('error', function(data) {
+   document.getElementById("statusMsg").innerHTML = "<span class='error'>Error reading from serial</span>";
+   charty.moarData();
+});
 port.on('data', function(data) {
+  document.getElementById("statusMsg").innerHTML = "connected to serial";
   message += data;
   if (reggy.test(message)) {
      var reading = reggy.exec(message)[0];
@@ -150,3 +136,4 @@ port.on('data', function(data) {
      message = '';
   }
 });
+
